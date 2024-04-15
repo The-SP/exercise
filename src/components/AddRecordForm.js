@@ -1,5 +1,5 @@
 // src/components/Form.js
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Input from "./Input";
 import {
   validateName,
@@ -8,10 +8,11 @@ import {
   validateProfilePicture,
 } from "../utils/formValidation";
 
-const AddRecordForm = ({ entries, setEntries }) => {
+const AddRecordForm = ({ selectedEntry, setEntries }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+
   const [dob, setDOB] = useState("");
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
@@ -22,9 +23,30 @@ const AddRecordForm = ({ entries, setEntries }) => {
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  const [dobError, setDOBError] = useState("");
-  const [addressError, setAddressError] = useState("");
   const [profilePictureError, setProfilePictureError] = useState("");
+
+  useEffect(() => {
+    if (selectedEntry) {
+      setName(selectedEntry.name || "");
+      setEmail(selectedEntry.email || "");
+      setPhone(selectedEntry.phone || "");
+      setDOB(selectedEntry.dob || "");
+      setCity(selectedEntry.city || "");
+      setDistrict(selectedEntry.district || "");
+      setProvince(selectedEntry.province || "");
+      setCountry(selectedEntry.country || "Nepal");
+      setProfilePicture(selectedEntry.profilePicture || null);
+
+      resetError();
+    }
+  }, [selectedEntry]);
+
+  const resetError = () => {
+    setNameError("");
+    setEmailError("");
+    setPhoneError("");
+    setProfilePictureError(null);
+  };
 
   const handleNameChange = (e) => {
     const name = e.target.value;
@@ -89,17 +111,14 @@ const AddRecordForm = ({ entries, setEntries }) => {
       nameError === "" &&
       emailError === "" &&
       phoneError === "" &&
-      dobError === "" &&
-      addressError === "" &&
       profilePictureError === ""
     ) {
       // Form is valid, perform submission logic here
 
-      // Generate id for new entry
-      const newId = entries.length > 0 ? entries[entries.length - 1].id + 1 : 0;
+      // Retrieve entries from localStorage
+      let storedEntries = JSON.parse(localStorage.getItem("entries")) || [];
 
       const formData = {
-        id: newId,
         name,
         email,
         phone,
@@ -113,13 +132,30 @@ const AddRecordForm = ({ entries, setEntries }) => {
         profilePicture,
       };
 
-      // Save the form data to local storage
-      const entries = JSON.parse(localStorage.getItem("entries")) || [];
-      entries.push(formData);
-      localStorage.setItem("entries", JSON.stringify(entries));
+      if (selectedEntry) {
+        // Update the existing entry in localStorage
+        const updatedEntries = storedEntries.map((entry) => {
+          if (entry.id === selectedEntry.id) {
+            return { id: entry.id, ...formData };
+          }
+          return entry;
+        });
 
-      // Add the new entry to the entries state
-      setEntries([...entries, formData]);
+        localStorage.setItem("entries", JSON.stringify(updatedEntries));
+        setEntries(updatedEntries);
+      } else {
+        // Add a new entry to localStorage with an appropriate id
+        const newId =
+          storedEntries?.length > 0
+            ? storedEntries[storedEntries.length - 1].id + 1
+            : 0;
+
+        const newFormData = { id: newId, ...formData };
+        storedEntries.push(newFormData);
+
+        localStorage.setItem("entries", JSON.stringify(storedEntries));
+        setEntries([...storedEntries]);
+      }
 
       // Reset the form fields
       setName("");
@@ -133,10 +169,7 @@ const AddRecordForm = ({ entries, setEntries }) => {
       setProfilePicture(undefined);
 
       // Reset the error states
-      setNameError("");
-      setEmailError("");
-      setPhoneError("");
-      setProfilePictureError("");
+      resetError();
 
       // Display a success message or redirect to another page
       console.log("Form submitted successfully!");
@@ -150,101 +183,130 @@ const AddRecordForm = ({ entries, setEntries }) => {
   };
 
   return (
-    <div className="container">
+    <div>
       <h1>Add New Entry</h1>
       <form onSubmit={handleSubmit}>
-        <Input
-          label="Name"
-          id="name"
-          value={name}
-          onChange={handleNameChange}
-          type="text"
-          error={nameError}
-        />
-        <Input
-          label="Email"
-          id="email"
-          value={email}
-          onChange={handleEmailChange}
-          type="email"
-          error={emailError}
-        />
-        <Input
-          label="Phone Number"
-          id="phone"
-          value={phone}
-          onChange={handlePhoneChange}
-          type="tel"
-          error={phoneError}
-        />
-        <Input
-          label="Date of Birth"
-          id="dob"
-          value={dob}
-          onChange={handleDOBChange}
-          type="date"
-          error={dobError}
-        />
-        <div className="form-group">
-          <label className="lead">Address</label>
-          <Input
-            label="City"
-            id="city"
-            name="city"
-            value={city}
-            onChange={handleAddressChange}
-            type="text"
-          />
-          <Input
-            label="District"
-            id="district"
-            name="district"
-            value={district}
-            onChange={handleAddressChange}
-            type="text"
-          />
-          <Input
-            label="Province"
-            id="province"
-            name="province"
-            value={province}
-            onChange={handleAddressChange}
-            type="text"
-          />
-          <Input
-            label="Country"
-            id="country"
-            name="country"
-            value={country}
-            onChange={handleAddressChange}
-            type="text"
-          />
-          {addressError && <div className="text-danger">{addressError}</div>}
+        <div className="row">
+          <div className="col-md-6">
+            <Input
+              label="Name"
+              id="name"
+              value={name}
+              onChange={handleNameChange}
+              type="text"
+              error={nameError}
+              autoFocus
+              required
+            />
+          </div>
+          <div className="col-md-6">
+            <Input
+              label="Email"
+              id="email"
+              value={email}
+              onChange={handleEmailChange}
+              type="email"
+              error={emailError}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-6">
+            <Input
+              label="Phone Number"
+              id="phone"
+              value={phone}
+              onChange={handlePhoneChange}
+              type="tel"
+              error={phoneError}
+              required
+            />
+          </div>
+          <div className="col-md-6">
+            <Input
+              label="Date of Birth"
+              id="dob"
+              value={dob}
+              onChange={handleDOBChange}
+              type="date"
+            />
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-6">
+            <Input
+              label="City"
+              id="city"
+              name="city"
+              value={city}
+              onChange={handleAddressChange}
+              type="text"
+            />
+          </div>
+          <div className="col-md-6">
+            <Input
+              label="District"
+              id="district"
+              name="district"
+              value={district}
+              onChange={handleAddressChange}
+              type="text"
+            />
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-6">
+            <Input
+              label="Province"
+              id="province"
+              name="province"
+              value={province}
+              onChange={handleAddressChange}
+              type="text"
+            />
+          </div>
+          <div className="col-md-6">
+            <Input
+              label="Country"
+              id="country"
+              name="country"
+              value={country}
+              onChange={handleAddressChange}
+              type="text"
+            />
+          </div>
         </div>
 
         {/* Profile Picture */}
-        <div className="form-group mb-3">
-          <label htmlFor="profilePicture">
-            Profile Picture:{" "}
-            {!profilePicture && (
-              <div>
-                <small>(Image must be in .png format)</small>
-              </div>
-            )}
-          </label>
-
-          <input
-            type="file"
-            className="form-control"
-            id="profilePicture"
-            accept="image/png"
-            onChange={handleProfilePictureChange}
-            required
-          />
-          {profilePictureError && (
-            <div className="text-danger">{profilePictureError}</div>
-          )}
+        <div className="row">
+          <div className="col-md-6">
+            <div className="form-group mb-3">
+              <label htmlFor="profilePicture">
+                Profile Picture:{" "}
+                {!profilePicture && (
+                  <div>
+                    <small>(Image must be in .png format)</small>
+                  </div>
+                )}
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                id="profilePicture"
+                accept="image/png"
+                onChange={handleProfilePictureChange}
+              />
+              {profilePictureError && (
+                <div className="text-danger">{profilePictureError}</div>
+              )}
+            </div>
+          </div>
         </div>
+
         <button type="submit" className="btn btn-lg btn-success">
           Submit
         </button>

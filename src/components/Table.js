@@ -1,7 +1,7 @@
 // src/components/Table.js
 import { useState } from "react";
 
-const Table = ({ entries, setEntries }) => {
+const Table = ({ entries, handleDelete, handleEdit }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const entriesPerPage = 5;
 
@@ -15,19 +15,11 @@ const Table = ({ entries, setEntries }) => {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
-  console.log(totalPages);
 
-  const handleDelete = (id) => {
-    const updatedEntries = entries.filter(entry => entry.id !== id);
-    setEntries(updatedEntries);
-    // Optionally, you can update the localStorage here
-    localStorage.setItem("entries", JSON.stringify(updatedEntries));
-  };
-
-// Display message when entries are empty
-if (entries.length === 0) {
+  // Display message when entries are empty
+  if (entries.length === 0) {
     return <h3>No entries available.</h3>;
-    }
+  }
 
   return (
     <div className="mt-4">
@@ -51,12 +43,10 @@ if (entries.length === 0) {
               <td>{entry.phone}</td>
               <td>{entry.dob}</td>
               <td>
-                <td>
-                  {entry.address.city && entry.address.city + ", "}
-                  {entry.address.district && entry.address.district + ", "}
-                  {entry.address.province && entry.address.province + ", "}
-                  {entry.address.country && entry.address.country}
-                </td>
+                {entry.address.city && entry.address.city + ", "}
+                {entry.address.district && entry.address.district + ", "}
+                {entry.address.province && entry.address.province + ", "}
+                {entry.address.country && entry.address.country}
               </td>
               <td>
                 {entry.profilePicture && (
@@ -68,8 +58,18 @@ if (entries.length === 0) {
                 )}
               </td>
               <td>
-                <button className="btn btn-danger btn-sm me-2" onClick={() => handleDelete(entry.id)}>Delete</button>
-                <button className="btn btn-primary btn-sm">Edit</button>
+                <button
+                  className="btn btn-danger btn-sm me-2"
+                  onClick={() => handleDelete(entry.id)}
+                >
+                  Delete
+                </button>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={() => handleEdit(entry)}
+                >
+                  Edit
+                </button>
               </td>
             </tr>
           ))}
