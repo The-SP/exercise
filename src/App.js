@@ -1,23 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import AddRecordForm from "./components/AddRecordForm.js";
+import Table from "./components/Table.js";
 
 function App() {
+  const [entries, setEntries] = useState([]);
+
+  useEffect(() => {
+    const storedEntries = JSON.parse(localStorage.getItem("entries")) || [];
+    setEntries(storedEntries);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <AddRecordForm entries={entries} setEntries={setEntries} />
+      <Table entries={entries} setEntries={setEntries} />
     </div>
   );
 }
