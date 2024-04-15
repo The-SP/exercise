@@ -25,6 +25,26 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
   const [phoneError, setPhoneError] = useState("");
   const [profilePictureError, setProfilePictureError] = useState("");
 
+  const [countryNames, setCountryNames] = useState([]);
+
+  useEffect(() => {
+    fetch("https://restcountries.com/v3.1/all")
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Error fetching data");
+        }
+      })
+      .then((data) => {
+        const countries = data.map((item) => item.name.common);
+        setCountryNames(countries);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+
   useEffect(() => {
     if (selectedEntry) {
       setName(selectedEntry.name || "");
@@ -66,33 +86,6 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
     setPhoneError(validatePhone(phone));
   };
 
-  const handleDOBChange = (e) => {
-    const dob = e.target.value;
-    setDOB(dob);
-    // setDOBError(validateDOB(dob));
-  };
-
-  const handleAddressChange = (e) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case "city":
-        setCity(value);
-        break;
-      case "district":
-        setDistrict(value);
-        break;
-      case "province":
-        setProvince(value);
-        break;
-      case "country":
-        setCountry(value);
-        break;
-      default:
-        break;
-    }
-    // setAddressError(validateAddress(city, district, province, country));
-  };
-
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
     setProfilePicture(file);
@@ -114,23 +107,20 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
       profilePictureError === ""
     ) {
       // Form is valid, perform submission logic here
-
-      // Retrieve entries from localStorage
-      let storedEntries = JSON.parse(localStorage.getItem("entries")) || [];
-
       const formData = {
         name,
         email,
         phone,
         dob,
-        address: {
-          city,
-          district,
-          province,
-          country,
-        },
+        city,
+        district,
+        province,
+        country,
         profilePicture,
       };
+
+      // Retrieve entries from localStorage
+      let storedEntries = JSON.parse(localStorage.getItem("entries")) || [];
 
       if (selectedEntry) {
         // Update the existing entry in localStorage
@@ -154,7 +144,7 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
         storedEntries.push(newFormData);
 
         localStorage.setItem("entries", JSON.stringify(storedEntries));
-        setEntries([...storedEntries]);
+        setEntries((prevEntries) => [...prevEntries, newFormData]);
       }
 
       // Reset the form fields
@@ -229,7 +219,7 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
               label="Date of Birth"
               id="dob"
               value={dob}
-              onChange={handleDOBChange}
+              onChange={(e) => setDOB(e.target.value)}
               type="date"
             />
           </div>
@@ -242,7 +232,7 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
               id="city"
               name="city"
               value={city}
-              onChange={handleAddressChange}
+              onChange={(e) => setCity(e.target.value)}
               type="text"
             />
           </div>
@@ -252,7 +242,7 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
               id="district"
               name="district"
               value={district}
-              onChange={handleAddressChange}
+              onChange={(e) => setDistrict(e.target.value)}
               type="text"
             />
           </div>
@@ -260,24 +250,48 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
 
         <div className="row">
           <div className="col-md-6">
-            <Input
-              label="Province"
-              id="province"
-              name="province"
-              value={province}
-              onChange={handleAddressChange}
-              type="text"
-            />
+            <div className="form-group mb-3">
+              <label className="form-label" htmlFor="province">
+                Province
+              </label>
+              <select
+                className="form-select"
+                aria-label="Default select example"
+                id="province"
+                name="province"
+                value={province}
+                onChange={(e) => setProvince(e.target.value)}
+              >
+                <option>Province</option>
+                <option value="1">Province 1</option>
+                <option value="2">Province 2</option>
+                <option value="3">Province 3</option>
+                <option value="4">Province 4</option>
+                <option value="5">Province 5</option>
+                <option value="6">Province 6</option>
+                <option value="7">Province 7</option>
+              </select>
+            </div>
           </div>
           <div className="col-md-6">
-            <Input
-              label="Country"
-              id="country"
-              name="country"
-              value={country}
-              onChange={handleAddressChange}
-              type="text"
-            />
+            <div className="form-group mb-3">
+              <label className="form-label" htmlFor="country">
+                Country
+              </label>
+              <select
+                className="form-select"
+                id="country"
+                name="country"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+              >
+                {countryNames.map((country, index) => (
+                  <option value={country} key={index}>
+                    {country}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 

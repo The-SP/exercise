@@ -1,5 +1,6 @@
 // src/components/Table.js
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Table = ({ entries, handleDelete, handleEdit }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -8,7 +9,10 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
   // Get the current entries to display
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = entries.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = entries
+    .slice()
+    .reverse()
+    .slice(indexOfFirstEntry, indexOfLastEntry);
 
   // Pagination logic
   const totalPages = Math.ceil(entries.length / entriesPerPage);
@@ -23,9 +27,10 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
 
   return (
     <div className="mt-4">
-      <table className="table table-striped">
+      <table className="table table-sm table-striped table-hover cursor-pointer">
         <thead>
           <tr>
+            <th>#</th>
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
@@ -38,15 +43,16 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
         <tbody>
           {currentEntries.map((entry, index) => (
             <tr key={index}>
+              <td>{index + indexOfFirstEntry + 1}</td>
               <td>{entry.name}</td>
               <td>{entry.email}</td>
               <td>{entry.phone}</td>
               <td>{entry.dob}</td>
               <td>
-                {entry.address.city && entry.address.city + ", "}
-                {entry.address.district && entry.address.district + ", "}
-                {entry.address.province && entry.address.province + ", "}
-                {entry.address.country && entry.address.country}
+                {entry.city && entry.city + ", "}
+                {entry.district && entry.district + ", "}
+                {entry.province && "Province " + entry.province + ", "}
+                {entry.country && entry.country}
               </td>
               <td>
                 {entry.profilePicture && (
@@ -77,7 +83,7 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
       </table>
       {totalPages > 1 && (
         <nav>
-          <ul className="pagination justify-content-center">
+          <ul className="pagination justify-content-center cursor-pointer">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(
               (pageNumber) => (
                 <li
@@ -87,13 +93,19 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
                   }`}
                   onClick={() => handlePageChange(pageNumber)}
                 >
-                  <a className="page-link">{pageNumber}</a>
+                  <span className="page-link">{pageNumber}</span>
                 </li>
               )
             )}
           </ul>
         </nav>
       )}
+
+      <div>
+        <Link to="/profile" className="btn btn-primary">
+          Profile Page
+        </Link>
+      </div>
     </div>
   );
 };
