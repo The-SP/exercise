@@ -5,7 +5,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("entries")) || [];
-    setEntries(storedEntries);
+    setEntries(storedEntries.reverse());    
   }, []);
 
   return (
@@ -16,7 +16,17 @@ const ProfilePage = () => {
           <div key={index} className="col-md-6 col-lg-4 mb-4">
             <div className="card">
               <div className="card-body">
-                <h5 className="card-title">{entry.name}</h5>
+                <h5 className="card-title text-center">{entry.name}</h5>
+                {entry.profilePicture && (
+                  <div className="text-center">
+                    <img
+                      src={entry.profilePicture}
+                      alt="Profile Picture"
+                      className="img-fluid"
+                      style={{ maxHeight: "100px" }}
+                    />
+                  </div>
+                )}
                 <p className="card-text">
                   <strong>Email:</strong> {entry.email}
                 </p>
@@ -43,16 +53,6 @@ const ProfilePage = () => {
                     <strong>Country:</strong> {entry.country}
                   </li>
                 </ul>
-                {entry.profilePicture && (
-                  <div className="text-center">
-                    <img
-                      src={entry.profilePicture}
-                      alt="Profile Picture"
-                      className="img-fluid"
-                      style={{ maxHeight: "200px" }}
-                    />
-                  </div>
-                )}
               </div>
             </div>
           </div>

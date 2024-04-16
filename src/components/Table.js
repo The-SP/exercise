@@ -59,7 +59,8 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
                   <img
                     src={entry.profilePicture}
                     alt="Profile"
-                    className="img-thumbnail"
+                    className="img-circle img-fluid"
+                    style={{ maxWidth: '50px', maxHeight: '50px' }}
                   />
                 )}
               </td>

@@ -65,7 +65,7 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
     setNameError("");
     setEmailError("");
     setPhoneError("");
-    setProfilePictureError(null);
+    setProfilePictureError("");
   };
 
   const handleNameChange = (e) => {
@@ -88,8 +88,14 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
 
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
-    setProfilePicture(file);
-    setProfilePictureError(validateProfilePicture(file));
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const imageData = reader.result;
+      setProfilePicture(imageData);
+      setProfilePictureError(validateProfilePicture(imageData));
+    };
   };
 
   const handleSubmit = (e) => {
@@ -156,7 +162,7 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
       setDistrict("");
       setProvince("");
       setCountry("Nepal");
-      setProfilePicture(undefined);
+      setProfilePicture(null);
 
       // Reset the error states
       resetError();
@@ -307,13 +313,23 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
                   </div>
                 )}
               </label>
-              <input
-                type="file"
-                className="form-control"
-                id="profilePicture"
-                accept="image/png"
-                onChange={handleProfilePictureChange}
-              />
+              <div className="d-flex">
+                <input
+                  type="file"
+                  className="form-control"
+                  id="profilePicture"
+                  accept="image/png"
+                  onChange={handleProfilePictureChange}
+                />
+                {profilePicture && (
+                  <img
+                    src={profilePicture}
+                    alt="Profile"
+                    className="img-circle img-fluid"
+                    style={{ maxWidth: "50px", maxHeight: "50px" }}
+                  />
+                )}
+              </div>
               {profilePictureError && (
                 <div className="text-danger">{profilePictureError}</div>
               )}

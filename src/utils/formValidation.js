@@ -25,11 +25,14 @@ export const validatePhone = (phone) => {
 };
 
 export const validateProfilePicture = (profilePicture) => {
-//   if (!profilePicture) {
-//     // return "*Profile picture is required.";
-//   } 
-  if (profilePicture && profilePicture.type !== "image/png") {
-    return "*Only PNG files are allowed.";
+  //   if (!profilePicture) {
+  //     // return "*Profile picture is required.";
+  //   }
+  //   if (profilePicture && profilePictureType !== "image/png") {
+  //     return "*Only PNG files are allowed.";
+  //   }
+  if (profilePicture && !profilePicture.includes("image/png")) {
+    return "*Only PNG files are allowed";
   }
   return "";
 };
