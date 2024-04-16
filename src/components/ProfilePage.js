@@ -2,17 +2,30 @@ import { useState, useEffect } from "react";
 
 const ProfilePage = () => {
   const [entries, setEntries] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("entries")) || [];
     setEntries(storedEntries.reverse());
   }, []);
 
+  const filteredEntries = entries.filter((entry) =>
+    entry.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="container">
       <h1 className="my-4">Profiles</h1>
+      {/* Search Box */}
+      <input
+        type="text"
+        className="form-control w-75 mx-auto mb-3"
+        placeholder="Search by Name.."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
       <div className="row">
-        {entries.map((entry, index) => (
+        {filteredEntries.map((entry, index) => (
           <div key={index} className="col-md-6 col-lg-4 mb-4">
             <div className="card shadow">
               <div className="card-body">

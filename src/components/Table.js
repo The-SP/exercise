@@ -18,7 +18,7 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = filteredEntries
     .slice()
-    .reverse()
+    .reverse() // This line is used to display entries in reverse order (for showing newest entries first)
     .slice(indexOfFirstEntry, indexOfLastEntry);
 
   // Pagination logic
@@ -34,6 +34,7 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
 
   return (
     <div className="py-2">
+      {/* Search Box */}
       <input
         type="text"
         className="form-control w-75 mx-auto mb-3"
@@ -41,6 +42,7 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+      {/* Table */}
       <table className="table table-sm table-striped table-hover shadow-lg cursor-pointer">
         <thead>
           <tr>

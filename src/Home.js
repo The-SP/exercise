@@ -4,7 +4,7 @@ import Table from "./components/Table.js";
 
 const Home = () => {
   const [entries, setEntries] = useState([]);
-  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [selectedEntry, setSelectedEntry] = useState(null); // for editing action
 
   useEffect(() => {
     const storedEntries = JSON.parse(localStorage.getItem("entries")) || [];
@@ -18,7 +18,6 @@ const Home = () => {
   };
 
   const handleEdit = (entry) => {
-    console.log("Edit button pressed");
     setSelectedEntry(entry);
     window.scrollTo({
       top: 0,
