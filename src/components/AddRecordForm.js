@@ -89,6 +89,8 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
 
+    if (!file) return;
+
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
@@ -179,7 +181,7 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
   };
 
   return (
-    <div>
+    <div className="p-1">
       <h1>Add New Entry</h1>
       <form onSubmit={handleSubmit}>
         <div className="row">
@@ -268,7 +270,7 @@ const AddRecordForm = ({ selectedEntry, setEntries }) => {
                 value={province}
                 onChange={(e) => setProvince(e.target.value)}
               >
-                <option>Province</option>
+                <option value="">Province</option>
                 <option value="1">Province 1</option>
                 <option value="2">Province 2</option>
                 <option value="3">Province 3</option>

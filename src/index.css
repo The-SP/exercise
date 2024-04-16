@@ -15,3 +15,7 @@ code {
 .cursor-pointer {
     cursor: pointer;
 }
+
+.table-container {
+    overflow-x: scroll;
+}
