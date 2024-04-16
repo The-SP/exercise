@@ -27,11 +27,11 @@ const Home = () => {
   };
 
   return (
-    <div>
-      <div className="container border border-3 p-sm-3 my-5">
+    <div className="container-md">
+      <div className="border border-3 p-sm-3 my-5 shadow">
         <AddRecordForm selectedEntry={selectedEntry} setEntries={setEntries} />
       </div>
-      <div className="container border border-3 p-sm-3 mb-3">
+      <div className="border border-3 p-sm-3 mb-3 shadow">
         <Table
           entries={entries}
           handleDelete={handleDelete}

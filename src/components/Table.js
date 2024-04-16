@@ -3,13 +3,20 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Table = ({ entries, handleDelete, handleEdit }) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [currentPage, setCurrentPage] = useState(1);
   const entriesPerPage = 5;
+
+  // Filter entries
+  const filteredEntries = entries.filter((entry) =>
+    entry.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // Get the current entries to display
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = entries
+  const currentEntries = filteredEntries
     .slice()
     .reverse()
     .slice(indexOfFirstEntry, indexOfLastEntry);
@@ -26,8 +33,15 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
   }
 
   return (
-    <div className="mt-4">
-      <table className="table table-sm table-striped table-hover cursor-pointer">
+    <div className="py-2">
+      <input
+        type="text"
+        className="form-control w-75 mx-auto mb-3"
+        placeholder="Search by Name.."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <table className="table table-sm table-striped table-hover shadow-lg cursor-pointer">
         <thead>
           <tr>
             <th>#</th>
@@ -36,7 +50,7 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
             <th>Phone</th>
             <th>DOB</th>
             <th>Address</th>
-            <th>Profile Picture</th>
+            <th>Profile Pic</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -60,7 +74,7 @@ const Table = ({ entries, handleDelete, handleEdit }) => {
                     src={entry.profilePicture}
                     alt="Profile"
                     className="img-circle img-fluid"
-                    style={{ maxWidth: '50px', maxHeight: '50px' }}
+                    style={{ maxWidth: "50px", maxHeight: "50px" }}
                   />
                 )}
               </td>
